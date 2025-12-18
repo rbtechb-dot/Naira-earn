@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wallet - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white pb-20">
+    <div class="p-4">
+        <h2 class="text-2xl font-bold mb-4">My Wallet</h2>
+        
+        <div class="bg-slate-800 p-6 rounded-2xl mb-6 flex flex-col items-center">
+            <p class="text-slate-400">Current Balance</p>
+            <h1 class="text-4xl font-bold text-green-400 mb-4">₦12,500</h1>
+            <div class="w-full space-y-3">
+                <input type="number" id="withdrawAmount" placeholder="Enter Amount" class="w-full bg-slate-900 border border-slate-600 rounded p-3 focus:outline-none focus:border-green-500">
+                <button onclick="attemptWithdrawal()" class="w-full bg-green-500 hover:bg-green-400 text-slate-900 font-bold py-3 rounded-lg transition">Withdraw Funds</button>
+            </div>
+            <p id="limitsDisplay" class="text-xs text-slate-500 mt-2">Min: ₦1,000 | Max: ₦50,000</p>
+        </div>
+
+        <h3 class="font-bold mb-3">Transaction History</h3>
+        <div class="space-y-3" id="historyList">
+            <!-- Static History -->
+            <div class="bg-slate-800 p-4 rounded-xl flex justify-between items-center border border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="bg-green-500/20 text-green-400 w-10 h-10 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold">Daily Login</p>
+                        <p class="text-xs text-slate-500">Today, 8:00 AM</p>
+                    </div>
+                </div>
+                <span class="text-green-400 font-bold">+₦50</span>
+            </div>
+
+            <div class="bg-slate-800 p-4 rounded-xl flex justify-between items-center border border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-500/20 text-blue-400 w-10 h-10 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold">Referral Bonus</p>
+                        <p class="text-xs text-slate-500">Yesterday</p>
+                    </div>
+                </div>
+                <span class="text-green-400 font-bold">+₦100</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="fixed bottom-0 w-full bg-slate-800 border-t border-slate-700 p-3 flex justify-around items-center z-50">
+        <a href="dashboard.html" class="flex flex-col items-center text-slate-400 hover:text-green-400">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] mt-1">Home</span>
+        </a>
+        <a href="tasks.html" class="flex flex-col items-center text-slate-400 hover:text-green-400">
+            <i class="fa-solid fa-list-check text-lg"></i>
+            <span class="text-[10px] mt-1">Tasks</span>
+        </a>
+        <a href="wallet.html" class="flex flex-col items-center text-green-400">
+            <i class="fa-solid fa-wallet text-lg"></i>
+            <span class="text-[10px] mt-1">Wallet</span>
+        </a>
+        <a href="logout.html" class="flex flex-col items-center text-slate-400 hover:text-red-400">
+            <i class="fa-solid fa-power-off text-lg"></i>
+            <span class="text-[10px] mt-1">Logout</span>
+        </a>
+    </div>
+
+    <script>
+        let minWith = 1000;
+        let maxWith = 50000;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            minWith = parseInt(localStorage.getItem('site_min_with') || '1000');
+            maxWith = parseInt(localStorage.getItem('site_max_with') || '50000');
+            document.getElementById('limitsDisplay').innerText = `Min: ₦${minWith} | Max: ₦${maxWith}`;
+            loadUserWithdrawals();
+        });
+
+        function attemptWithdrawal() {
+            const amountInput = document.getElementById('withdrawAmount');
+            const amount = parseInt(amountInput.value);
+
+            if(!amount || amount < minWith || amount > maxWith) {
+                alert(`Please enter an amount between ₦${minWith} and ₦${maxWith}`);
+                return;
+            }
+
+            // Create Request Object
+            const request = {
+                id: Date.now(),
+                amount: amount,
+                status: 'pending',
+                user: localStorage.getItem('active_user_name') || 'User' 
+            };
+
+            // Save to Storage for Admin to see
+            const current = JSON.parse(localStorage.getItem('site_withdrawals') || '[]');
+            current.push(request);
+            localStorage.setItem('site_withdrawals', JSON.stringify(current));
+
+            alert('Withdrawal request submitted! Pending Admin Approval.');
+            amountInput.value = '';
+            loadUserWithdrawals();
+        }
+
+        function loadUserWithdrawals() {
+            const historyDiv = document.getElementById('historyList');
+            // Append pending requests from storage to the history list view
+            const current = JSON.parse(localStorage.getItem('site_withdrawals') || '[]');
+            
+            // We only show the last 3 for demo, filter for 'Emmanuel' in a real app
+            current.sort((a,b) => b.id - a.id).forEach(w => {
+                let color = w.status === 'pending' ? 'text-yellow-400' : (w.status === 'approved' ? 'text-green-400' : 'text-red-400');
+                let icon = w.status === 'pending' ? 'fa-clock' : (w.status === 'approved' ? 'fa-check' : 'fa-xmark');
+                
+                // Check if element already exists to avoid dupes (simple check)
+                if(!document.getElementById(`tx-${w.id}`)) {
+                    const html = `
+                        <div id="tx-${w.id}" class="bg-slate-800 p-4 rounded-xl flex justify-between items-center border border-slate-700">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-slate-700 ${color} w-10 h-10 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid ${icon}"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold capitalize">Withdrawal (${w.status})</p>
+                                    <p class="text-xs text-slate-500">${new Date(w.id).toLocaleTimeString()}</p>
+                                </div>
+                            </div>
+                            <span class="${color} font-bold">-₦${w.amount}</span>
+                        </div>
+                    `;
+                    // Insert after the static header (simplified for demo)
+                    historyDiv.insertAdjacentHTML('afterbegin', html);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

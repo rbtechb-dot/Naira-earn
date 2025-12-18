@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+
+    <!-- LOGIN OVERLAY -->
+    <div id="loginOverlay" class="fixed inset-0 bg-slate-900 z-[100] flex items-center justify-center p-4">
+        <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 w-full max-w-md text-center">
+            <div class="mb-6">
+                <i class="fa-solid fa-user-shield text-5xl text-red-500"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Admin Access</h2>
+            <p class="text-slate-400 mb-6">Enter secure PIN to continue</p>
+            <form onsubmit="verifyAdmin(event)" class="space-y-4">
+                <input type="password" id="adminPass" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-center text-xl tracking-widest focus:border-red-500 outline-none" placeholder="******" required>
+                <button class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg transition">Unlock Panel</button>
+            </form>
+            <p id="errorMsg" class="text-red-400 mt-4 text-sm hidden">Invalid Password</p>
+        </div>
+    </div>
+
+    <!-- MAIN ADMIN CONTENT (Hidden by default) -->
+    <div id="adminContent" class="hidden p-6 max-w-7xl mx-auto pb-20">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-red-400"><i class="fa-solid fa-gauge-high mr-2"></i>Master Control</h1>
+                <p class="text-slate-400">System Configuration & Management</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="clearData()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded text-xs">Reset Defaults</button>
+                <a href="index.html" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-bold">Logout</a>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- COLUMN 1: Financial & Global Settings -->
+            <div class="lg:col-span-1 space-y-8">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="fa-solid fa-sliders text-6xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-6 text-green-400">Global Configuration</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold">Referral Bonus (₦)</label>
+                            <input type="number" id="refAmount" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-green-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold">Daily Login Earn (₦)</label>
+                            <input type="number" id="dailyLogin" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-green-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold">Min Withdrawal</label>
+                                <input type="number" id="minWith" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-green-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 uppercase font-bold">Max Withdrawal</label>
+                                <input type="number" id="maxWith" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-green-500 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 uppercase font-bold">WhatsApp Support Number</label>
+                            <input type="text" id="waNum" class="w-full bg-slate-900 border border-slate-600 rounded p-2 focus:border-green-500 outline-none" placeholder="23480...">
+                        </div>
+                        <button onclick="saveGlobalSettings()" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded font-bold transition">Update Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2 & 3: Content Management -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- NEW: WITHDRAWAL REQUESTS -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-yellow-400"><i class="fa-solid fa-money-bill-transfer mr-2"></i>Withdrawal Requests</h3>
+                        <button onclick="loadWithdrawals()" class="text-xs bg-slate-700 p-2 rounded hover:bg-slate-600"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">User</th>
+                                    <th class="p-3">Amount</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawalTable" class="divide-y divide-slate-700">
+                                <!-- JS Injected Rows -->
+                                <tr><td colspan="5" class="p-4 text-center text-slate-500">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Task Management -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 text-blue-400"><i class="fa-solid fa-list-check mr-2"></i>Post New Task</h3>
+                    <form onsubmit="postTask(event)" class="grid md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <input type="text" id="taskTitle" placeholder="Task Title (e.g. Join Telegram Group)" required class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <select id="taskPlatform" class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-blue-500">
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="telegram">Telegram</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="twitter">Twitter/X</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="youtube">YouTube</option>
+                                <Option value="website">website</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="number" id="taskReward" placeholder="Reward Amount (₦)" required class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded font-bold transition">Publish Task</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Giveaway Management -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-xl font-bold mb-4 text-purple-400"><i class="fa-solid fa-gift mr-2"></i>Update Giveaway</h3>
+                    <form onsubmit="postGiveaway(event)" class="space-y-4">
+                        <input type="text" id="giveTitle" placeholder="Giveaway Title (e.g. Weekend Jumbo)" required class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-purple-500">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <input type="text" id="givePrize" placeholder="Prize (e.g. ₦50,000)" required class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-purple-500">
+                            <input type="text" id="giveEnd" placeholder="Ends In (e.g. 2 Days)" required class="w-full bg-slate-900 border border-slate-600 rounded p-3 outline-none focus:border-purple-500">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 py-3 rounded font-bold transition">Update Giveaway Banner</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. LOGIN LOGIC
+        function verifyAdmin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPass').value;
+            if(pass === '898989') {
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                loadSettings();
+                loadWithdrawals();
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+            }
+        }
+
+        // 2. LOAD SETTINGS FROM STORAGE
+        function loadSettings() {
+            document.getElementById('refAmount').value = localStorage.getItem('site_referral') || 100;
+            document.getElementById('dailyLogin').value = localStorage.getItem('site_daily') || 50;
+            document.getElementById('minWith').value = localStorage.getItem('site_min_with') || 1000;
+            document.getElementById('maxWith').value = localStorage.getItem('site_max_with') || 50000;
+            document.getElementById('waNum').value = localStorage.getItem('site_whatsapp') || '2348000000000';
+        }
+
+        // 3. LOAD WITHDRAWALS
+        function loadWithdrawals() {
+            const table = document.getElementById('withdrawalTable');
+            const raw = localStorage.getItem('site_withdrawals');
+            const withdrawals = raw ? JSON.parse(raw) : [];
+
+            if(withdrawals.length === 0) {
+                table.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">No pending requests.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            // Sort by date new to old
+            withdrawals.sort((a,b) => b.id - a.id).forEach(w => {
+                let statusColor = 'text-yellow-400';
+                let actions = `
+                    <button onclick="updateWithdrawal(${w.id}, 'approved')" class="text-green-400 hover:text-green-300 mr-2"><i class="fa-solid fa-check"></i></button>
+                    <button onclick="updateWithdrawal(${w.id}, 'rejected')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                `;
+
+                if(w.status === 'approved') {
+                    statusColor = 'text-green-400';
+                    actions = '<span class="text-xs text-slate-500">Completed</span>';
+                } else if(w.status === 'rejected') {
+                    statusColor = 'text-red-400';
+                    actions = '<span class="text-xs text-slate-500">Rejected</span>';
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-700/50 transition">
+                        <td class="p-3 text-slate-400">${new Date(w.id).toLocaleDateString()}</td>
+                        <td class="p-3 font-semibold">${w.user || 'User'}</td>
+                        <td class="p-3 font-bold text-white">₦${w.amount}</td>
+                        <td class="p-3 ${statusColor} capitalize">${w.status}</td>
+                        <td class="p-3">${actions}</td>
+                    </tr>
+                `;
+            });
+            table.innerHTML = html;
+        }
+
+        // 4. UPDATE WITHDRAWAL STATUS
+        function updateWithdrawal(id, status) {
+            const raw = localStorage.getItem('site_withdrawals');
+            let withdrawals = raw ? JSON.parse(raw) : [];
+            
+            withdrawals = withdrawals.map(w => {
+                if(w.id === id) w.status = status;
+                return w;
+            });
+
+            localStorage.setItem('site_withdrawals', JSON.stringify(withdrawals));
+            loadWithdrawals(); // Refresh table
+        }
+
+        // 5. SAVE GLOBAL SETTINGS
+        function saveGlobalSettings() {
+            localStorage.setItem('site_referral', document.getElementById('refAmount').value);
+            localStorage.setItem('site_daily', document.getElementById('dailyLogin').value);
+            localStorage.setItem('site_min_with', document.getElementById('minWith').value);
+            localStorage.setItem('site_max_with', document.getElementById('maxWith').value);
+            localStorage.setItem('site_whatsapp', document.getElementById('waNum').value);
+            alert('Configuration Saved Successfully!');
+        }
+
+        // 6. POST TASK
+        function postTask(e) {
+            e.preventDefault();
+            const newTask = {
+                id: Date.now(),
+                title: document.getElementById('taskTitle').value,
+                platform: document.getElementById('taskPlatform').value,
+                reward: document.getElementById('taskReward').value
+            };
+
+            const tasks = JSON.parse(localStorage.getItem('site_tasks') || '[]');
+            tasks.unshift(newTask);
+            localStorage.setItem('site_tasks', JSON.stringify(tasks));
+            
+            alert('Task Posted! Users will see this immediately.');
+            e.target.reset();
+        }
+
+        // 7. POST GIVEAWAY
+        function postGiveaway(e) {
+            e.preventDefault();
+            const giveaway = {
+                title: document.getElementById('giveTitle').value,
+                prize: document.getElementById('givePrize').value,
+                end: document.getElementById('giveEnd').value
+            };
+            localStorage.setItem('site_giveaway_active', JSON.stringify(giveaway));
+            alert('Giveaway Updated!');
+        }
+
+        function clearData() {
+            if(confirm('Reset all settings to default?')) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>u

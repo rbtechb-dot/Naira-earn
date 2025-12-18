@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-slate-800 p-8 rounded-2xl border border-slate-700">
+        <div class="text-center mb-6">
+            <i class="fa-solid fa-user-plus text-4xl text-green-400 mb-2"></i>
+            <h2 class="text-2xl font-bold">Create Account</h2>
+            <p class="text-slate-400 text-sm">Join thousands earning daily</p>
+        </div>
+        
+        <form id="regForm" onsubmit="handleRegister(event)" class="space-y-4">
+            <div>
+                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Full Name</label>
+                <input type="text" id="fullName" required placeholder="John Doe" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:outline-none focus:border-green-500">
+            </div>
+            <div>
+                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Phone Number</label>
+                <input type="tel" required placeholder="08012345678" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:outline-none focus:border-green-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Password</label>
+                    <input type="password" required class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:outline-none focus:border-green-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Referral Code</label>
+                    <input type="text" placeholder="Optional" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 focus:outline-none focus:border-green-500">
+                </div>
+            </div>
+            
+            <div class="pt-2">
+                <button type="submit" id="submitBtn" class="w-full bg-green-500 text-slate-900 font-bold py-3 rounded-lg hover:bg-green-400 transition flex justify-center items-center">
+                    <span>Create Account</span>
+                </button>
+            </div>
+        </form>
+
+        <p class="text-center mt-6 text-slate-400">Already have an account? <a href="login.html" class="text-green-400 font-bold">Login</a></p>
+    </div>
+
+    <script>
+        function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const name = document.getElementById('fullName').value;
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Creating...';
+
+            // Simulate backend delay and storage
+            setTimeout(() => {
+                // Save simulated user data
+                localStorage.setItem('active_user_name', name);
+                localStorage.setItem('is_logged_in', 'true');
+                
+                // Redirect
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

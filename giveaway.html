@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Giveaway - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white pb-20">
+    <div class="p-4">
+        <h2 class="text-2xl font-bold mb-4">Weekly Giveaway</h2>
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-2xl mb-6 text-center shadow-lg shadow-purple-900/50">
+            <h3 id="giveTitle" class="text-2xl font-bold mb-1">Special Giveaway</h3>
+            <h1 id="givePrize" class="text-4xl font-extrabold mb-2">₦50,000 Prize</h1>
+            <p id="giveEnd" class="text-purple-200 mb-4 bg-white/10 inline-block px-3 py-1 rounded-lg text-sm">Draw ends in 2 days</p>
+            <br>
+            <button onclick="document.getElementById('entrySection').scrollIntoView({behavior: 'smooth'})" class="bg-white text-purple-600 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition">Enter Now</button>
+        </div>
+
+        <!-- FORM SECTION -->
+        <div id="entrySection">
+            <h3 class="font-bold mb-3">Submit Details to Win</h3>
+            <form onsubmit="handleGiveaway(event)" class="bg-slate-800 p-4 rounded-xl space-y-3 mb-6 border border-slate-700">
+                <input type="text" placeholder="Account Name" required class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:border-purple-500 outline-none">
+                <input type="text" placeholder="Bank Name" required class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:border-purple-500 outline-none">
+                <input type="number" placeholder="Account Number" required class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg focus:border-purple-500 outline-none">
+                <button id="submitBtn" type="submit" class="w-full bg-green-500 text-slate-900 font-bold p-3 rounded-lg hover:bg-green-400 transition flex items-center justify-center gap-2">
+                    Submit Entry
+                </button>
+            </form>
+        </div>
+
+        <!-- SUCCESS MESSAGE (Hidden by default) -->
+        <div id="successSection" class="hidden bg-slate-800 p-8 rounded-xl text-center border border-slate-700 mb-6">
+            <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-check text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">Congratulations!</h2>
+            <p class="text-slate-400">Your account has been submitted. Our team will pick randomly.</p>
+            <button onclick="location.reload()" class="mt-6 bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-full text-sm transition">
+                Close
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Nav -->
+    <div class="fixed bottom-0 w-full bg-slate-800 border-t border-slate-700 p-3 flex justify-around items-center z-50">
+        <a href="dashboard.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-house text-lg"></i></a>
+        <a href="tasks.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-list-check text-lg"></i></a>
+        <a href="wallet.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-wallet text-lg"></i></a>
+        <a href="logout.html" class="flex flex-col items-center text-red-400"><i class="fa-solid fa-power-off text-lg"></i></a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stored = localStorage.getItem('site_giveaway_active');
+            if(stored) {
+                const data = JSON.parse(stored);
+                document.getElementById('giveTitle').innerText = data.title;
+                document.getElementById('givePrize').innerText = data.prize;
+                document.getElementById('giveEnd').innerText = `Ends: ${data.end}`;
+            }
+        });
+
+        function handleGiveaway(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const entrySection = document.getElementById('entrySection');
+            const successSection = document.getElementById('successSection');
+
+            // Loading State
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Submitting...';
+
+            setTimeout(() => {
+                // Hide form, show success
+                entrySection.classList.add('hidden');
+                successSection.classList.remove('hidden');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

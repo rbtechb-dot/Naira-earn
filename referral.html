@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Referrals - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white pb-20">
+    
+    <div class="p-4">
+        <h2 class="text-2xl font-bold mb-4">Refer & Earn</h2>
+        
+        <div class="bg-slate-800 p-6 rounded-2xl text-center border border-slate-700 mb-6">
+            <p class="text-slate-400 text-sm mb-2">Your Referral Link</p>
+            <div class="bg-slate-900 p-3 rounded-lg border border-slate-600 flex items-center justify-between">
+                <code class="text-green-400 truncate">nairaearn.com/ref/emmanuel123</code>
+                <button onclick="alert('Copied!')" class="text-slate-400 hover:text-white"><i class="fa-regular fa-copy"></i></button>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                <div class="bg-slate-700/50 p-2 rounded">
+                    <span id="refAmtDisplay" class="block font-bold text-green-400">₦100</span>
+                    <span class="text-xs text-slate-400">Per Register</span>
+                </div>
+                <div class="bg-slate-700/50 p-2 rounded">
+                    <span class="block font-bold text-green-400">₦500</span>
+                    <span class="text-xs text-slate-400">Active Bonus</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="font-bold mb-3">My Referrals</h3>
+        <div class="space-y-3">
+            <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">John Doe</p>
+                    <p class="text-xs text-slate-500">Joined: Today</p>
+                </div>
+                <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">Inactive</span>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Jane Smith</p>
+                    <p class="text-xs text-slate-500">Joined: 2 days ago</p>
+                </div>
+                <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="fixed bottom-0 w-full bg-slate-800 border-t border-slate-700 p-3 flex justify-around items-center z-50">
+        <a href="dashboard.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-house text-lg"></i></a>
+        <a href="tasks.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-list-check text-lg"></i></a>
+        <a href="wallet.html" class="flex flex-col items-center text-slate-400 hover:text-green-400"><i class="fa-solid fa-wallet text-lg"></i></a>
+        <a href="logout.html" class="flex flex-col items-center text-red-400"><i class="fa-solid fa-power-off text-lg"></i></a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const refAmt = localStorage.getItem('site_referral') || '100';
+            document.getElementById('refAmtDisplay').innerText = `₦${refAmt}`;
+        });
+    </script>
+</body>
+</html>

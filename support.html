@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support - NairaEarn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-white pb-20">
+    <div class="p-4">
+        <h2 class="text-2xl font-bold mb-6">Help & Support</h2>
+        
+        <a id="wa-link" href="#" target="_blank" class="bg-green-600 text-white p-4 rounded-xl flex items-center justify-center gap-3 font-bold mb-8 hover:bg-green-500">
+            <i class="fa-brands fa-whatsapp text-2xl"></i>
+            Chat on WhatsApp
+        </a>
+
+        <h3 class="font-bold mb-4">Frequently Asked Questions</h3>
+        <div class="space-y-4">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h4 class="font-bold text-green-400">How do I withdraw?</h4>
+                <p class="text-sm text-slate-400 mt-2">Once you reach the minimum threshold, click withdrawal on the wallet page. Payments are processed on Fridays.</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h4 class="font-bold text-green-400">Why is my referral pending?</h4>
+                <p class="text-sm text-slate-400 mt-2">Referrals must verify their phone number and log in for 3 days to become active.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="fixed bottom-0 w-full bg-slate-800 border-t border-slate-700 p-3 flex justify-around items-center z-50">
+        <a href="dashboard.html" class="flex flex-col items-center text-slate-400 hover:text-green-400">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] mt-1">Home</span>
+        </a>
+        <a href="support.html" class="flex flex-col items-center text-green-400">
+            <i class="fa-solid fa-headset text-lg"></i>
+            <span class="text-[10px] mt-1">Support</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedNumber = localStorage.getItem('site_whatsapp') || '2348000000000';
+            document.getElementById('wa-link').href = `https://wa.me/${savedNumber}`;
+        });
+    </script>
+</body>
+</html>
